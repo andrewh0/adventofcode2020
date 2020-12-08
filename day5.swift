@@ -823,66 +823,66 @@ FBBBFBBLLR
 let boardingPasses = input.components(separatedBy: "\n")
 
 func getSeatId(boardingPass: String) -> Int {
-  let bp = boardingPass.map { $0 }
-  var index = 0
-  var rowMax = 128
-  var rowMin = 1
-  var row = 0
-  while index < 7 {
-    if bp[index] == "F" {
-      rowMax = rowMax - ((rowMax - rowMin) / 2) - 1
-    } else if bp[index] == "B" {
-      rowMin = rowMin + ((rowMax - rowMin) / 2) + 1
+    let bp = boardingPass.map { $0 }
+    var index = 0
+    var rowMax = 128
+    var rowMin = 1
+    var row = 0
+    while index < 7 {
+        if bp[index] == "F" {
+            rowMax = rowMax - ((rowMax - rowMin) / 2) - 1
+        } else if bp[index] == "B" {
+            rowMin = rowMin + ((rowMax - rowMin) / 2) + 1
+        }
+        index += 1
     }
-    index += 1
-  }
-  if bp[6] == "F" {
-    row = rowMin
-  } else {
-    row = rowMax
-  }
-
-  index = 7
-  var col = 0
-  var colMax = 8
-  var colMin = 1
-
-  while index < bp.count {
-    if bp[index] == "L" {
-      colMax = colMax - ((colMax - colMin) / 2) - 1
-    } else if bp[index] == "R" {
-      colMin = colMin + ((colMax - colMin) / 2) + 1
+    if bp[6] == "F" {
+        row = rowMin
+    } else {
+        row = rowMax
     }
-    index += 1
-  }
-  if bp[bp.count - 1] == "L" {
-    col = colMin
-  } else {
-    col = colMax
-  }
-  return (row - 1) * 8 + (col - 1)
+
+    index = 7
+    var col = 0
+    var colMax = 8
+    var colMin = 1
+
+    while index < bp.count {
+        if bp[index] == "L" {
+            colMax = colMax - ((colMax - colMin) / 2) - 1
+        } else if bp[index] == "R" {
+            colMin = colMin + ((colMax - colMin) / 2) + 1
+        }
+        index += 1
+    }
+    if bp[bp.count - 1] == "L" {
+        col = colMin
+    } else {
+        col = colMax
+    }
+    return (row - 1) * 8 + (col - 1)
 }
 
 func part1() -> Int {
-  let seatIds = boardingPasses.map { getSeatId(boardingPass: $0) }
-  return seatIds.max()!
+    let seatIds = boardingPasses.map { getSeatId(boardingPass: $0) }
+    return seatIds.max()!
 }
 
 func part2() -> Int {
-  var seatIds = boardingPasses.map { getSeatId(boardingPass: $0) }
-  seatIds.sort()
-  var index = 1
-  var lastId = seatIds[0]
-  while index < seatIds.count {
-    let currentId = seatIds[index]
-    if currentId != lastId + 1 {
-      return lastId + 1
+    var seatIds = boardingPasses.map { getSeatId(boardingPass: $0) }
+    seatIds.sort()
+    var index = 1
+    var lastId = seatIds[0]
+    while index < seatIds.count {
+        let currentId = seatIds[index]
+        if currentId != lastId + 1 {
+            return lastId + 1
+        }
+        lastId = seatIds[index]
+        index += 1
     }
-    lastId = seatIds[index]
-    index += 1
-  }
-  return -1
+    return -1
 }
+
 print(part1())
 print(part2())
-

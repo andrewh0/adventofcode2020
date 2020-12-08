@@ -206,37 +206,35 @@ let input = """
 let entries = input.components(separatedBy: "\n").map { Int($0)! }
 
 func part1(entries: [Int]) -> Int? {
-  for (i, entry) in entries.enumerated() {
-    for (j, entry2) in entries.enumerated() {
-      if i == j {
-        continue
-      }
-      if entry + entry2 == 2020 {
-        return entry * entry2
-      }
+    for (i, entry) in entries.enumerated() {
+        for (j, entry2) in entries.enumerated() {
+            if i == j {
+                continue
+            }
+            if entry + entry2 == 2020 {
+                return entry * entry2
+            }
+        }
     }
-  }
-  return nil
+    return nil
 }
 
 // 😬 O(n^3)
 func part2(entries: [Int]) -> Int? {
-  for (i, entry) in entries.enumerated() {
-    for (j, entry2) in entries.enumerated() {
-      for (k, entry3) in entries.enumerated() {
-        if i == j && j == k {
-          continue
+    for (i, entry) in entries.enumerated() {
+        for (j, entry2) in entries.enumerated() {
+            for (k, entry3) in entries.enumerated() {
+                if i == j, j == k {
+                    continue
+                }
+                if entry + entry2 + entry3 == 2020 {
+                    return entry * entry2 * entry3
+                }
+            }
         }
-        if entry + entry2 + entry3 == 2020 {
-          return entry * entry2 * entry3
-        }
-      }
     }
-  }
-  return nil
+    return nil
 }
 
 print(part1(entries: entries)!)
 print(part2(entries: entries)!)
-
-

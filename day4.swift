@@ -960,126 +960,130 @@ byr:1971
 ecl:brn eyr:2024
 """
 
-
 typealias Passport = [String: String]
 
 func propertyListToDict(propertyList: [String]) -> Passport {
-  var result = Passport()
-  for property in propertyList {
-    let keyValue = property.components(separatedBy: ":")
-    result[keyValue[0]] = keyValue[1]
-  }
-  return result
+    var result = Passport()
+    for property in propertyList {
+        let keyValue = property.components(separatedBy: ":")
+        result[keyValue[0]] = keyValue[1]
+    }
+    return result
 }
 
 func getPassports(input: String) -> [Passport] {
-  let passportList = input.components(separatedBy: "\n\n").map {
-    String($0).components(separatedBy: CharacterSet(charactersIn: "\n "))
-  }
-  return passportList.map { propertyListToDict(propertyList: $0) }
+    let passportList = input.components(separatedBy: "\n\n").map {
+        String($0).components(separatedBy: CharacterSet(charactersIn: "\n "))
+    }
+    return passportList.map { propertyListToDict(propertyList: $0) }
 }
 
 func validatePassport(passport: Passport) -> Bool {
-  let requiredSet: Set = ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid", "cid"]
-  var passportSet = Set<String>()
-  for (k, _) in passport {
-    passportSet.insert(k)
-  }
-  let hasAllRequired = requiredSet.intersection(passportSet).count == requiredSet.count
-  let hasAllExceptCid = requiredSet.intersection(passportSet).count == requiredSet.count - 1 && !passportSet.contains("cid");
-  return hasAllRequired || hasAllExceptCid
+    let requiredSet: Set = ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid", "cid"]
+    var passportSet = Set<String>()
+    for (k, _) in passport {
+        passportSet.insert(k)
+    }
+    let hasAllRequired = requiredSet.intersection(passportSet).count == requiredSet.count
+    let hasAllExceptCid = requiredSet.intersection(passportSet).count == requiredSet.count - 1 && !passportSet.contains("cid")
+    return hasAllRequired || hasAllExceptCid
 }
 
 func matchesRegex(str: String, pattern: String) -> Bool {
-  let range = NSRange(location: 0, length: str.utf16.count)
-  let regex = try! NSRegularExpression(pattern: pattern)
-  return regex.firstMatch(in: str, options: [], range: range) != nil
+    let range = NSRange(location: 0, length: str.utf16.count)
+    let regex = try! NSRegularExpression(pattern: pattern)
+    return regex.firstMatch(in: str, options: [], range: range) != nil
 }
 
 func validateByr(value: String) -> Bool {
-  guard let number = Int(value) else {
-    return false
-  }
-  return value.count == 4 && number >= 1920 && number <= 2002
+    guard let number = Int(value) else {
+        return false
+    }
+    return value.count == 4 && number >= 1920 && number <= 2002
 }
+
 func validateIyr(value: String) -> Bool {
-  guard let number = Int(value) else {
-    return false
-  }
-  return value.count == 4 && number >= 2010 && number <= 2020
+    guard let number = Int(value) else {
+        return false
+    }
+    return value.count == 4 && number >= 2010 && number <= 2020
 }
+
 func validateEyr(value: String) -> Bool {
-  guard let number = Int(value) else {
-    return false
-  }
-  return value.count == 4 && number >= 2020 && number <= 2030
+    guard let number = Int(value) else {
+        return false
+    }
+    return value.count == 4 && number >= 2020 && number <= 2030
 }
+
 func validateHgt(value: String) -> Bool {
-  if value.hasSuffix("cm") {
-    guard let cm = Int(value.prefix(3)) else {
-      return false
+    if value.hasSuffix("cm") {
+        guard let cm = Int(value.prefix(3)) else {
+            return false
+        }
+        return cm >= 150 && cm <= 193
+    } else if value.hasSuffix("in") {
+        guard let inches = Int(value.prefix(2)) else {
+            return false
+        }
+        return inches >= 59 && inches <= 76
+    } else {
+        return false
     }
-    return cm >= 150 && cm <= 193
-  } else if value.hasSuffix("in") {
-    guard let inches = Int(value.prefix(2)) else {
-      return false
-    }
-    return inches >= 59 && inches <= 76
-  } else {
-    return false
-  }
 }
+
 func validateHcl(value: String) -> Bool {
-  matchesRegex(str: value, pattern: "^#[0-9a-f]{6}$")
+    matchesRegex(str: value, pattern: "^#[0-9a-f]{6}$")
 }
+
 func validateEcl(value: String) -> Bool {
-  let validEcl: Set = ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"]
-  return value.count == 3 && validEcl.contains(value)
+    let validEcl: Set = ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"]
+    return value.count == 3 && validEcl.contains(value)
 }
+
 func validatePid(value: String) -> Bool {
-  matchesRegex(str: value, pattern: "^[0-9]{9}$")
+    matchesRegex(str: value, pattern: "^[0-9]{9}$")
 }
 
 let validators: [String: (String) -> Bool] = [
-  "byr": validateByr,
-  "iyr": validateIyr,
-  "eyr": validateEyr,
-  "hgt": validateHgt,
-  "hcl": validateHcl,
-  "ecl": validateEcl,
-  "pid": validatePid,
+    "byr": validateByr,
+    "iyr": validateIyr,
+    "eyr": validateEyr,
+    "hgt": validateHgt,
+    "hcl": validateHcl,
+    "ecl": validateEcl,
+    "pid": validatePid,
 ]
 
 func hasValidPassportProperties(passport: Passport) -> Bool {
-  for (k, v) in passport {
-    guard let validatorFunc = validators[k] else {
-      continue
+    for (k, v) in passport {
+        guard let validatorFunc = validators[k] else {
+            continue
+        }
+        if !validatorFunc(v) {
+            return false
+        }
     }
-    if !validatorFunc(v) {
-      return false
-    }
-  }
-  return true
+    return true
 }
 
 func validatePassport2(passport: Passport) -> Bool {
-  let requiredSet: Set = ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid", "cid"]
-  var passportSet = Set<String>()
-  for (k, _) in passport {
-    passportSet.insert(k)
-  }
-  let hasAllRequired = requiredSet.intersection(passportSet).count == requiredSet.count
-  let hasAllExceptCid = requiredSet.intersection(passportSet).count == requiredSet.count - 1 && !passportSet.contains("cid");
-  return (hasAllRequired || hasAllExceptCid) && hasValidPassportProperties(passport: passport)
+    let requiredSet: Set = ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid", "cid"]
+    var passportSet = Set<String>()
+    for (k, _) in passport {
+        passportSet.insert(k)
+    }
+    let hasAllRequired = requiredSet.intersection(passportSet).count == requiredSet.count
+    let hasAllExceptCid = requiredSet.intersection(passportSet).count == requiredSet.count - 1 && !passportSet.contains("cid")
+    return (hasAllRequired || hasAllExceptCid) && hasValidPassportProperties(passport: passport)
 }
 
-
 func part1(input: String) -> Int {
-  getPassports(input: input).map { validatePassport(passport: $0) }.filter { $0 }.count
+    getPassports(input: input).map { validatePassport(passport: $0) }.filter { $0 }.count
 }
 
 func part2(input: String) -> Int {
-  getPassports(input: input).map { validatePassport2(passport: $0) }.filter { $0 }.count
+    getPassports(input: input).map { validatePassport2(passport: $0) }.filter { $0 }.count
 }
 
 print(part1(input: input))

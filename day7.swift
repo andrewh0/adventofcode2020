@@ -619,125 +619,120 @@ dark blue bags contain 2 dark violet bags.
 dark violet bags contain no other bags.
 """
 
-
 let rules = input.components(separatedBy: "\n")
 
 func processRules(rules: [String]) -> [String: [String]] {
-  var result = [String: [String]]()
-  for rule in rules {
-    let ruleParts = rule.components(separatedBy: " contain ")
+    var result = [String: [String]]()
+    for rule in rules {
+        let ruleParts = rule.components(separatedBy: " contain ")
 
-    let containedBagsStr = String(Array(ruleParts[1]).dropLast(1))
-    let containedBags = getContainedBags(containedBagsStr: containedBagsStr)
-    let containingBag = ruleParts[0]
+        let containedBagsStr = String(Array(ruleParts[1]).dropLast(1))
+        let containedBags = getContainedBags(containedBagsStr: containedBagsStr)
+        let containingBag = ruleParts[0]
 
-    let containingBagParts = containingBag.components(separatedBy: " ")
-    let containingBagStr = "\(containingBagParts[0]) \(containingBagParts[1])"
+        let containingBagParts = containingBag.components(separatedBy: " ")
+        let containingBagStr = "\(containingBagParts[0]) \(containingBagParts[1])"
 
-    for containedBag in containedBags {
-      if result[containedBag] == nil {
-        result[containedBag] = [containingBagStr]
-      } else {
-        result[containedBag]!.append(containingBagStr)
-      }
+        for containedBag in containedBags {
+            if result[containedBag] == nil {
+                result[containedBag] = [containingBagStr]
+            } else {
+                result[containedBag]!.append(containingBagStr)
+            }
+        }
     }
-  }
-  return result
+    return result
 }
 
 func processRules2(rules: [String]) -> [String: [(String, Int)]] {
-  var result = [String: [(String, Int)]]()
-  for rule in rules {
-    let ruleParts = rule.components(separatedBy: " contain ")
+    var result = [String: [(String, Int)]]()
+    for rule in rules {
+        let ruleParts = rule.components(separatedBy: " contain ")
 
-    let containedBagsStr = String(Array(ruleParts[1]).dropLast(1))
-    let containedBags = getContainedBags2(containedBagsStr: containedBagsStr)
-    let containingBag = ruleParts[0]
+        let containedBagsStr = String(Array(ruleParts[1]).dropLast(1))
+        let containedBags = getContainedBags2(containedBagsStr: containedBagsStr)
+        let containingBag = ruleParts[0]
 
-    let containingBagParts = containingBag.components(separatedBy: " ")
-    let containingBagStr = "\(containingBagParts[0]) \(containingBagParts[1])"
+        let containingBagParts = containingBag.components(separatedBy: " ")
+        let containingBagStr = "\(containingBagParts[0]) \(containingBagParts[1])"
 
-    for containedBag in containedBags {
-      let (name, quantity) = containedBag
-      if result[containingBagStr] == nil {
-        result[containingBagStr] = [(name, quantity)]
-      } else {
-        result[containingBagStr]!.append((name, quantity))
-      }
+        for containedBag in containedBags {
+            let (name, quantity) = containedBag
+            if result[containingBagStr] == nil {
+                result[containingBagStr] = [(name, quantity)]
+            } else {
+                result[containingBagStr]!.append((name, quantity))
+            }
+        }
     }
-  }
-  return result
+    return result
 }
 
 func getContainedBags(containedBagsStr: String) -> [String] {
-  if containedBagsStr == "no other bags" {
-    return []
-  }
-  let bags = containedBagsStr.components(separatedBy: ", ")
-  // drop quantity, ^bags?$
-  return bags.map {
-    let bagWords = $0.components(separatedBy: " ")
-    return "\(bagWords[1]) \(bagWords[2])"
-  }
+    if containedBagsStr == "no other bags" {
+        return []
+    }
+    let bags = containedBagsStr.components(separatedBy: ", ")
+    // drop quantity, ^bags?$
+    return bags.map {
+        let bagWords = $0.components(separatedBy: " ")
+        return "\(bagWords[1]) \(bagWords[2])"
+    }
 }
 
 func getContainedBags2(containedBagsStr: String) -> [(String, Int)] {
-  if containedBagsStr == "no other bags" {
-    return []
-  }
-  let bags = containedBagsStr.components(separatedBy: ", ")
-  // drop ^bags?$
-  return bags.map {
-    let bagWords = $0.components(separatedBy: " ")
-    return ("\(bagWords[1]) \(bagWords[2])", Int(bagWords[0])!)
-  }
+    if containedBagsStr == "no other bags" {
+        return []
+    }
+    let bags = containedBagsStr.components(separatedBy: ", ")
+    // drop ^bags?$
+    return bags.map {
+        let bagWords = $0.components(separatedBy: " ")
+        return ("\(bagWords[1]) \(bagWords[2])", Int(bagWords[0])!)
+    }
 }
 
 func countBags(bagType: String, processedRules: [String: [String]]) -> Int {
-  var colorSet = Set<String>()
-  func countBagsHelper(bagType: String) {
-    guard let containingBags = processedRules[bagType] else {
-      return
+    var colorSet = Set<String>()
+    func countBagsHelper(bagType: String) {
+        guard let containingBags = processedRules[bagType] else {
+            return
+        }
+        for containingBag in containingBags {
+            colorSet = colorSet.union(Set(containingBags))
+            countBagsHelper(bagType: containingBag)
+        }
     }
-    for containingBag in containingBags {
-      colorSet = colorSet.union(Set(containingBags))
-      countBagsHelper(bagType: containingBag)
-    }
-  }
-  countBagsHelper(bagType: "shiny gold")
+    countBagsHelper(bagType: "shiny gold")
 
-  return colorSet.count
+    return colorSet.count
 }
 
 func countBags2(bagType: String, processedRules: [String: [(String, Int)]]) -> Int {
-  func countBagsHelper(bagType: String) -> Int {
-    guard let containedBags = processedRules[bagType] else {
-      return 0
+    func countBagsHelper(bagType: String) -> Int {
+        guard let containedBags = processedRules[bagType] else {
+            return 0
+        }
+        var count = 0
+        for containedBag in containedBags {
+            let (bagType, quantity) = containedBag
+            count += quantity
+            count += quantity * countBagsHelper(bagType: bagType)
+        }
+        return count
     }
-    var count = 0
-    for containedBag in containedBags {
-      let (bagType, quantity) = containedBag
-      count += quantity
-      count += quantity * countBagsHelper(bagType: bagType)
-    }
-    return count
-  }
-  return countBagsHelper(bagType: "shiny gold")
+    return countBagsHelper(bagType: "shiny gold")
 }
 
 func part1() -> Int {
-  let processedRules = processRules(rules: rules)
-  return countBags(bagType: "shiny gold", processedRules: processedRules)
+    let processedRules = processRules(rules: rules)
+    return countBags(bagType: "shiny gold", processedRules: processedRules)
 }
 
 func part2() -> Int {
-  let processedRules = processRules2(rules: rules)
-  return countBags2(bagType: "shiny gold", processedRules: processedRules)
+    let processedRules = processRules2(rules: rules)
+    return countBags2(bagType: "shiny gold", processedRules: processedRules)
 }
 
 print(part1())
 print(part2())
-
-
-
-

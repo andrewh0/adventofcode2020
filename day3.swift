@@ -327,73 +327,73 @@ let input = """
 """
 
 func createMatrix(input: String) -> [[String]] {
-  var result: [[String]] = []
-  let rows = input.components(separatedBy: "\n").map { String($0) }
-  for row in rows {
-    result.append(contentsOf: [row.map { String($0) }])
-  }
-  return result
+    var result: [[String]] = []
+    let rows = input.components(separatedBy: "\n").map { String($0) }
+    for row in rows {
+        result.append(contentsOf: [row.map { String($0) }])
+    }
+    return result
 }
 
 /*
-Used in Part 1, but refactored to countTreesGeneral for part 2
+ Used in Part 1, but refactored to countTreesGeneral for part 2
 
-func countTrees(matrix: [[String]]) -> Int {
-  var r = 0
-  var c = 0
+ func countTrees(matrix: [[String]]) -> Int {
+   var r = 0
+   var c = 0
 
-  var trees = 0
-  while r < matrix.count {
-    if matrix[r][c] == "#" {
-      trees += 1
-    }
-    r += 1
-    if c + 3 >= matrix[0].count {
-      c = c + 3 - matrix[0].count
-    } else {
-      c += 3
-    }
-  }
-  return trees
-}
-*/
+   var trees = 0
+   while r < matrix.count {
+     if matrix[r][c] == "#" {
+       trees += 1
+     }
+     r += 1
+     if c + 3 >= matrix[0].count {
+       c = c + 3 - matrix[0].count
+     } else {
+       c += 3
+     }
+   }
+   return trees
+ }
+ */
 
 func part1() -> Int {
-  return countTreesGeneral(matrix: createMatrix(input: input), right: 3, down: 1)
+    return countTreesGeneral(matrix: createMatrix(input: input), right: 3, down: 1)
 }
 
 func countTreesGeneral(matrix: [[String]], right: Int, down: Int) -> Int {
-  var r = 0
-  var c = 0
+    var r = 0
+    var c = 0
 
-  var trees = 0
-  while r < matrix.count {
-    if matrix[r][c] == "#" {
-      trees += 1
+    var trees = 0
+    while r < matrix.count {
+        if matrix[r][c] == "#" {
+            trees += 1
+        }
+        r += down
+        if c + right >= matrix[0].count {
+            c = c + right - matrix[0].count
+        } else {
+            c += right
+        }
     }
-    r += down
-    if c + right >= matrix[0].count {
-      c = c + right - matrix[0].count
-    } else {
-      c += right
-    }
-  }
-  return trees
+    return trees
 }
 
 func part2() -> Int {
-  let slopes = [
-    [1, 1],
-    [3, 1],
-    [5, 1],
-    [7, 1],
-    [1, 2]
-  ]
-  return slopes.map {
-    let right = $0[0]
-    let down = $0[1]
-    return countTreesGeneral(matrix: createMatrix(input: input), right: right, down: down)
-  }.reduce(1, *)
+    let slopes = [
+        [1, 1],
+        [3, 1],
+        [5, 1],
+        [7, 1],
+        [1, 2],
+    ]
+    return slopes.map {
+        let right = $0[0]
+        let down = $0[1]
+        return countTreesGeneral(matrix: createMatrix(input: input), right: right, down: down)
+    }.reduce(1, *)
 }
 
 print(part1())

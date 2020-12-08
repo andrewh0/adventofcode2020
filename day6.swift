@@ -2232,27 +2232,27 @@ exugdvclmqfzsojiwnbarhty
 let groups = input.components(separatedBy: "\n\n")
 
 func processGroup(group: String) -> Int {
-  var questions = Set<String>()
-  let responses = group.components(separatedBy: "\n")
-  for response in responses {
-    questions = questions.union(Set(response.map { String($0) }))
-  }
-  return questions.count
+    var questions = Set<String>()
+    let responses = group.components(separatedBy: "\n")
+    for response in responses {
+        questions = questions.union(Set(response.map { String($0) }))
+    }
+    return questions.count
 }
 
 func processGroup2(group: String) -> Int {
-  let responseSets = group.components(separatedBy: "\n").map { Set($0.map { String($0) }) }
-  return responseSets.reduce(responseSets[0]) {
-    acc, curr in acc.intersection(curr)
-  }.count
+    let responseSets = group.components(separatedBy: "\n").map { Set($0.map { String($0) }) }
+    return responseSets.reduce(responseSets[0]) {
+        acc, curr in acc.intersection(curr)
+    }.count
 }
 
 func part1() -> Int {
-  groups.map { processGroup(group: $0) }.reduce(0, +)
+    groups.map { processGroup(group: $0) }.reduce(0, +)
 }
 
 func part2() -> Int {
-  groups.map { processGroup2(group: $0) }.reduce(0, +)
+    groups.map { processGroup2(group: $0) }.reduce(0, +)
 }
 
 print(part1())

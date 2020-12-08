@@ -1006,61 +1006,61 @@ let input = """
 let lines = input.components(separatedBy: "\n")
 
 func parseLine(line: String) -> (Int, Int, Character, String) {
-  let parts = line.components(separatedBy: ": ")
-  let requirement = parts[0]
-  let requirementParts = requirement.components(separatedBy: " ")
-  let numbers = requirementParts[0]
-  let numbersParts = numbers.components(separatedBy: "-")
+    let parts = line.components(separatedBy: ": ")
+    let requirement = parts[0]
+    let requirementParts = requirement.components(separatedBy: " ")
+    let numbers = requirementParts[0]
+    let numbersParts = numbers.components(separatedBy: "-")
 
-  let firstNumber = Int(numbersParts[0])!
-  let secondNumber = Int(numbersParts[1])!
-  let characterRequirement = Character(requirementParts[1])
-  let password = parts[1]
+    let firstNumber = Int(numbersParts[0])!
+    let secondNumber = Int(numbersParts[1])!
+    let characterRequirement = Character(requirementParts[1])
+    let password = parts[1]
 
-  return (firstNumber, secondNumber, characterRequirement, password)
+    return (firstNumber, secondNumber, characterRequirement, password)
 }
 
 func verifyLine(line: String) -> Bool {
-  let (firstNumber, secondNumber, characterRequirement, password) = parseLine(line: line)
-  let characterCounts = getOccurrences(str: password)
-  let characterCount = characterCounts[characterRequirement] ?? 0
-  return characterCount >= firstNumber && characterCount <= secondNumber
+    let (firstNumber, secondNumber, characterRequirement, password) = parseLine(line: line)
+    let characterCounts = getOccurrences(str: password)
+    let characterCount = characterCounts[characterRequirement] ?? 0
+    return characterCount >= firstNumber && characterCount <= secondNumber
 }
 
 func getOccurrences(str: String) -> [Character: Int] {
-  var dict = [Character: Int]()
-  for char in str {
-    if dict[char] == nil {
-      dict[char] = 1
-    } else {
-      dict[char]! += 1
+    var dict = [Character: Int]()
+    for char in str {
+        if dict[char] == nil {
+            dict[char] = 1
+        } else {
+            dict[char]! += 1
+        }
     }
-  }
-  return dict
+    return dict
 }
 
 func countValidPasswords(lines: [String], verifier: (String) -> Bool) -> Int {
-  return lines.map { verifier($0) }.filter { $0 }.count
+    return lines.map { verifier($0) }.filter { $0 }.count
 }
 
 func part1() -> Int {
-  return countValidPasswords(lines: lines, verifier: verifyLine)
+    return countValidPasswords(lines: lines, verifier: verifyLine)
 }
 
 func verifyLine2(line: String) -> Bool {
-  let (firstNumber, secondNumber, characterRequirement, password) = parseLine(line: line)
+    let (firstNumber, secondNumber, characterRequirement, password) = parseLine(line: line)
 
-  // Can't subscript String with Int (e.g. "foo"[1]), so convert String to Array
-  let firstChar = Array(password)[firstNumber - 1]
-  let secondChar = Array(password)[secondNumber - 1]
-  return (
-    (firstChar == characterRequirement && secondChar != characterRequirement) ||
-    (firstChar != characterRequirement && secondChar == characterRequirement)
-  )
+    // Can't subscript String with Int (e.g. "foo"[1]), so convert String to Array
+    let firstChar = Array(password)[firstNumber - 1]
+    let secondChar = Array(password)[secondNumber - 1]
+    return (
+        (firstChar == characterRequirement && secondChar != characterRequirement) ||
+            (firstChar != characterRequirement && secondChar == characterRequirement)
+    )
 }
 
 func part2() -> Int {
-  return countValidPasswords(lines: lines, verifier: verifyLine2)
+    return countValidPasswords(lines: lines, verifier: verifyLine2)
 }
 
 print(part1())
